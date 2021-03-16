@@ -138,7 +138,6 @@ namespace LionSpoon
         #endregion
         
         #region staticLanguageData
-        private static string languageFolder = null;
         private static Dictionary<string,Language> languages = new Dictionary<string,Language>();
         private static SettingsProfile settings;
 
