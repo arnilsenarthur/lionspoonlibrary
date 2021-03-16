@@ -5,10 +5,9 @@ This library adds multiples classes to help the development of games by Hangzhou
 - [X] Core System
 - [X] Settings
 - [X] Language
-- [ ] Sound
+- [x] Sound
 - [ ] LevelSelection System
 - [ ] UI/HUD
 - [ ] PlayStore APIS
-- [ ] Coin & Shop System
+- [x] Coin & Shop System
 - [ ] Upgrades (Timed or not) & Collectibles (Coins, etc...)
-- [ ] Shop
