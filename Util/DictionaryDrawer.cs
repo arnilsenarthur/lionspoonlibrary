@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
  
+#if UNITY_EDITOR
 public abstract class DictionaryDrawer<TK, TV> : PropertyDrawer
 {
     private SerializableDictionary<TK, TV> _Dictionary;
@@ -171,9 +172,7 @@ public abstract class DictionaryDrawer<TK, TV> : PropertyDrawer
         }
     }
 }
-[Serializable] public class StringAudioClip : SerializableDictionary<string, AudioClip> { }
-[Serializable] public class MyDictionary2 : SerializableDictionary<KeyCode, GameObject> { }
- 
+
  
 
 [CustomPropertyDrawer(typeof(StringAudioClip))]
@@ -181,3 +180,8 @@ public class MyDictionaryDrawer1 : DictionaryDrawer<string, AudioClip> { }
  
 [CustomPropertyDrawer(typeof(MyDictionary2))]
 public class MyDictionaryDrawer2 : DictionaryDrawer<KeyCode, GameObject> { }
+#endif
+
+[Serializable] public class StringAudioClip : SerializableDictionary<string, AudioClip> { }
+[Serializable] public class MyDictionary2 : SerializableDictionary<KeyCode, GameObject> { }
+ 
