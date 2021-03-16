@@ -23,6 +23,10 @@ LionSpoonLibraryManager.Init(new LionSpoonLibrarySettings()
     .WithSoundSources(4)
 );
 
-//init monobehaviour
+//Init monobehaviour
 UISystem.SetMonobehaviour(this);
+
+//Init Settings
+SettingsProfile st = new PlayerPrefsSettingsProfile("profileID");
+st.Set<string>("testData","DataDataRandomData");
 ```
