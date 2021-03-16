@@ -11,3 +11,18 @@ This library adds multiples classes to help the development of games by Hangzhou
 - [X] PlayStore APIS
 - [x] Coin & Shop System
 - [ ] Upgrades (Timed or not) & Collectibles (Coins, etc...)
+
+## Core:
+
+Init all libraries with settings
+````cs
+//Init with all libraries
+LionSpoonLibraryManager.Init(new LionSpoonLibrarySettings()
+    .WithModules(LionSpoonLibraryModule.All)
+    .WithDebug(false)
+    .WithSoundSources(4)
+);
+
+//init monobehaviour
+UISystem.SetMonobehaviour(this);
+```
