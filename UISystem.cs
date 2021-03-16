@@ -1,3 +1,15 @@
+/*
+  _       _                   ____                                  
+ | |     (_)   ___    _ __   / ___|   _ __     ___     ___    _ __  
+ | |     | |  / _ \  | '_ \  \___ \  | '_ \   / _ \   / _ \  | '_ \ 
+ | |___  | | | (_) | | | | |  ___) | | |_) | | (_) | | (_) | | | | |
+ |_____| |_|  \___/  |_| |_| |____/  | .__/   \___/   \___/  |_| |_|
+                                     |_|    
+                                                             
+    Lion Spoon Dream Game Technology© - 2021
+
+    Language library
+*/
 using System;
 using System.Collections;
 using System.Collections.Generic;

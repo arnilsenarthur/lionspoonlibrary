@@ -1,20 +1,27 @@
-﻿using System.Collections;
+﻿/*
+  _       _                   ____                                  
+ | |     (_)   ___    _ __   / ___|   _ __     ___     ___    _ __  
+ | |     | |  / _ \  | '_ \  \___ \  | '_ \   / _ \   / _ \  | '_ \ 
+ | |___  | | | (_) | | | | |  ___) | | |_) | | (_) | | (_) | | | | |
+ |_____| |_|  \___/  |_| |_| |____/  | .__/   \___/   \___/  |_| |_|
+                                     |_|    
+                                                             
+    Lion Spoon Dream Game Technology© - 2021
+
+    Language library
+*/
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 
-
+/// <summary>
+/// Handle class for button events for GPG integration
+/// </summary>
 public class GPS : MonoBehaviour
 {
-    
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void Login()
     {
         LionSpoon.GooglePlayServices.LogIn();
