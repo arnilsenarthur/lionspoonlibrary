@@ -15,7 +15,7 @@ This library adds multiples classes to help the development of games by Hangzhou
 ## Core:
 
 Init all libraries with settings
-````cs
+```cs
 //Init with all libraries
 LionSpoonLibraryManager.Init(new LionSpoonLibrarySettings()
     .WithModules(LionSpoonLibraryModule.All)
