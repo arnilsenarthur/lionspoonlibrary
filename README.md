@@ -31,3 +31,24 @@ UISystem.SetMonobehaviour(this);
 SettingsProfile st = new PlayerPrefsSettingsProfile("profileID");
 st.Set<string>("testData","DataDataRandomData");
 ```
+
+## Gif Recording:
+```cs
+GifRecorder recorder;
+recorder = new GifRecorder(20,20,400,400,new Rect(0,0,400,400));
+
+//Start to record
+recorder.Record(this);
+
+//Create gif from recording
+Gif g = recorder.CreateGif();
+
+//Bind gif to image renderer
+g.BindTo(image);
+
+//Save gif and get results
+g.Save(this,"filepath/capture.gif",(prog,end) => {
+    Debug.Log("Prog: " + prog + " End: " + end);
+});
+```
+
