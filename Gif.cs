@@ -27,8 +27,10 @@ namespace LionSpoon
     {  
         private List<GifFrame> frames; 
         private int fps = 0;
-
-        private  UnityEngine.UI.Image image;
+        private int w = 0;
+        private int h = 0;
+        private Thread thread = null;
+        private UnityEngine.UI.Image image;
 
         /// <summary>
         /// Default constructor
@@ -36,10 +38,12 @@ namespace LionSpoon
         /// <param name="fps"></param>
         /// <param name="frames"></param>
         /// <param name="sprites"></param>
-        public Gif(int fps,List<GifFrame> frames)
+        public Gif(int fps,int w,int h,List<GifFrame> frames)
         {
             this.fps = fps;
             this.frames = frames;
+            this.w = w;
+            this.h = h;
         }
 
         /// <summary>
@@ -90,7 +94,7 @@ namespace LionSpoon
             GifEncoder encoder = new GifEncoder(0, 50);
             encoder.SetDelay(Mathf.RoundToInt((1f/fps) * 1000f));
 
-            Thread t = new Thread(() => {
+            thread = new Thread(() => {
                 encoder.Start(filepath);
 
                 for (int i = 0; i < frames.Count; i++)
@@ -107,8 +111,8 @@ namespace LionSpoon
                 encoder.Finish();
                 updateProgress(1,true);
             });
-            t.Priority = System.Threading.ThreadPriority.BelowNormal;
-            t.Start();
+            thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+            thread.Start();
 
             yield return null;
         }
@@ -121,8 +125,14 @@ namespace LionSpoon
             this.image = null;
         }
 
+        /// <summary>
+        /// Dispose gif object,stoping threads, deleting textures and sprites
+        /// </summary>
         public void Dispose()
         {
+            if(thread != null)
+                thread.Abort();
+                
             Unbind();
 
             foreach(GifFrame frame in frames)
@@ -134,6 +144,10 @@ namespace LionSpoon
             frames.Clear();
         }
 
+        /// <summary>
+        /// __internal__
+        /// </summary>
+        /// <param name="obj"></param>
         private void Flush(UnityEngine.Object obj)
         {
             #if UNITY_EDITOR
@@ -144,6 +158,24 @@ namespace LionSpoon
             #else
                 UnityEngine.Object.Destroy(obj);
             #endif
+        }
+
+        /// <summary>
+        /// Returns gif width in pixels
+        /// </summary>
+        /// <returns></returns>
+        public int GetWidth()
+        {
+            return w;
+        }
+
+        /// <summary>
+        /// Returns gif height in pixels
+        /// </summary>
+        /// <returns></returns>
+        public int GetHeight()
+        {
+            return h;
         }
     }
 }

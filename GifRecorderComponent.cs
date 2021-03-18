@@ -1,8 +1,23 @@
-﻿using System.Collections;
+﻿/*
+  _       _                   ____                                  
+ | |     (_)   ___    _ __   / ___|   _ __     ___     ___    _ __  
+ | |     | |  / _ \  | '_ \  \___ \  | '_ \   / _ \   / _ \  | '_ \ 
+ | |___  | | | (_) | | | | |  ___) | | |_) | | (_) | | (_) | | | | |
+ |_____| |_|  \___/  |_| |_| |____/  | .__/   \___/   \___/  |_| |_|
+                                     |_|    
+                                                             
+    Lion Spoon Dream Game Technology© - 2021
+
+    Gif library
+*/
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LionSpoon;
 
+/// <summary>
+/// Main recorder component
+/// </summary>
 public class GifRecorderComponent : MonoBehaviour
 {
     public int width;
@@ -10,18 +25,15 @@ public class GifRecorderComponent : MonoBehaviour
     public int frames;
     public int fps;
     public float __timePerFrame;
-
     private float __dTime;
-
     private bool recording = true;
-
     private Queue<RenderTexture> framesBuffer = new Queue<RenderTexture>();
 
-    void OnStart()
-    {
-
-    }
-
+    /// <summary>
+    /// Used to get rendered image in frame
+    /// </summary>
+    /// <param name="src"></param>
+    /// <param name="dest"></param>
     public void OnRenderImage(RenderTexture src, RenderTexture dest) 
     {
         if(!recording)
@@ -56,19 +68,24 @@ public class GifRecorderComponent : MonoBehaviour
         Graphics.Blit(src, dest);
     }
 
+    /// <summary>
+    /// Stop recording and generate gif
+    /// </summary>
+    /// <param name="callback"></param>
     public void StopRecording(System.Action<Gif> callback)
     {
         recording = false;
-
         StartCoroutine(__StopRecording(callback));
     }
-
-
+    
+    /// <summary>
+    /// __internal__
+    /// </summary>
+    /// <param name="callback"></param>
+    /// <returns></returns>
     private IEnumerator __StopRecording(System.Action<Gif> callback)
     {
         List<GifFrame> sprites = new List<GifFrame>();
-
-        
 
         while (framesBuffer.Count > 0)
         {
@@ -95,17 +112,19 @@ public class GifRecorderComponent : MonoBehaviour
             gf.sprite = Sprite.Create(temp,new Rect(0,0,tx.width,tx.height),new Vector2(tx.width/2,tx.height/2),100);
             gf.texture = temp;
 
-            
-
             sprites.Add(gf);
             
             yield return null;
         }
 
-        callback(new Gif(fps,sprites));
+        callback(new Gif(fps,width,height,sprites));
         Destroy(this);
     }
 
+    /// <summary>
+    /// __internal__
+    /// </summary>
+    /// <param name="obj"></param>
     private void Flush(UnityEngine.Object obj)
     {
         #if UNITY_EDITOR

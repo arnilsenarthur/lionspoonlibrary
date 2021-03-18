@@ -16,8 +16,20 @@ using System.Collections.Generic;
 
 namespace LionSpoon
 {
+    /// <summary>
+    /// Main gif recorder class
+    /// </summary>
     public class GifRecorder
     {
+        /// <summary>
+        /// Starts to record a gif
+        /// </summary>
+        /// <param name="camera"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="frames"></param>
+        /// <param name="fps"></param>
+        /// <returns></returns>
         public static GifRecorderComponent StartRecording(Camera camera,int width,int height,int frames,int fps)
         {
             GifRecorderComponent rec = camera.gameObject.AddComponent<GifRecorderComponent>();
@@ -30,11 +42,21 @@ namespace LionSpoon
             return rec;
         }
 
+        /// <summary>
+        /// Check if some recorder is recoding camera
+        /// </summary>
+        /// <param name="camera"></param>
+        /// <returns></returns>
         public static bool IsRecording(Camera camera)
         {
             return camera.GetComponent<GifRecorderComponent>() != null;
         }
 
+        /// <summary>
+        /// Stop camera recorder
+        /// </summary>
+        /// <param name="camera"></param>
+        /// <param name="callback"></param>
         public static void StopRecording(Camera camera,System.Action<Gif> callback)
         {
             GifRecorderComponent rec = camera.GetComponent<GifRecorderComponent>();
