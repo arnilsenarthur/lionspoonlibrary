@@ -34,21 +34,19 @@ st.Set<string>("testData","DataDataRandomData");
 
 ## Gif Recording:
 ```cs
-GifRecorder recorder;
-recorder = new GifRecorder(20,20,400,400,new Rect(0,0,400,400));
+//Start recording
+GifRecorderComponent recorder = LionSpoon.GifRecorder.StartRecording(Camera.main,Screen.width,Screen.height,30,10);
 
-//Start to record
-recorder.Record(this);
-
-//Create gif from recording
-Gif g = recorder.CreateGif();
-
-//Bind gif to image renderer
-g.BindTo(image);
-
-//Save gif and get results
-g.Save(this,"filepath/capture.gif",(prog,end) => {
-    Debug.Log("Prog: " + prog + " End: " + end);
+//Stop recording and create gif
+recorder.StopRecording((g) => {
+    //Bind gif to image renderer
+    g.BindTo(image);
+    
+    //Save gif and get results
+    g.Save(this,"filepath/capture.gif",(prog,end) => {
+        //progress (float)
+        //end (bool)
+    });
 });
 ```
 
