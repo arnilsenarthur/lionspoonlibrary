@@ -50,3 +50,20 @@ recorder.StopRecording((g) => {
 });
 ```
 
+## Event System:
+```cs
+//Add a handler
+EventSystem.AddHandler("main_event",(object o) => {
+    //Do whatver you want with the object
+});
+
+//Add another handler
+EventSystem.AddHandler("main_event",(object o) => {
+    //Do whatver you want with the object
+});
+...
+
+//Call all handlers of a event with an object as parameter
+EventSystem.CallEvent("main_event",14);
+```
+
