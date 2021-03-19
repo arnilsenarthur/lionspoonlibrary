@@ -67,4 +67,12 @@ EventSystem.AddHandler("main_event",(object o) => {
 //Call all handlers of a event with an object as parameter
 EventSystem.CallEvent("main_event",14);
 ```
+## UI System:
+```cs
+//Register UI
+public static void AddUI(string id,CanvasGroup ui)
+{
+    screens[id] = ui;
+}
+```
 
