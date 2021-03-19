@@ -14,7 +14,7 @@
 #define LS_LANGUAGE
 #define LS_SETTINGS
 #define LS_SOUNDS
-#define LS_GOOGLE_PLAY_SERVICES
+#define LS_GAME_SERVICES
 
 using System;
 using System.Collections;
@@ -52,14 +52,16 @@ namespace LionSpoon
                 Language.ReloadLanguages();
             #endif
 
+            //SoundSystem
             #if LS_SOUNDS
             if((settings.GetModules() & LionSpoonLibraryModule.Sounds) == LionSpoonLibraryModule.Sounds)
                 SoundManager.Init();
             #endif
 
-            #if LS_GOOGLE_PLAY_SERVICES
-            if((settings.GetModules() & LionSpoonLibraryModule.GooglePlayServices) == LionSpoonLibraryModule.GooglePlayServices)
-                GooglePlayServices.Init();
+            //GameServices
+            #if LS_GAME_SERVICES
+            if((settings.GetModules() & LionSpoonLibraryModule.GameServices) == LionSpoonLibraryModule.GameServices)
+                GameServices.Init();
             #endif
         }
 
@@ -102,7 +104,7 @@ namespace LionSpoon
         Language = 1,
         Settings = 2,
         Sounds = 4,
-        GooglePlayServices = 8,
+        GameServices = 8,
         All = 255
     }
 

@@ -21,6 +21,10 @@ namespace LionSpoon
     /// </summary>
     public abstract class SettingsProfile
     {
+        public static SettingsProfile StandardSettings = new HandledPlayerPrefsSettingsProfile("standard")
+        .WithHandler("fxVolume","fxVolumeChanged")
+        .WithHandler("musicVolume","musicVolumeChanged");
+
         /// <summary>
         /// Add a default value to setting profile (WITHOUT WRITE IN FILE)
         /// </summary>
@@ -60,6 +64,47 @@ namespace LionSpoon
         /// </summary>
         /// <returns></returns>
         public abstract SettingsProfile DeleteAllCurrent();      
+    }
+
+    /// <summary>
+    /// Used to create a setting profile that calls events wehen value change  
+    /// </summary>
+    public class HandledPlayerPrefsSettingsProfile : PlayerPrefsSettingsProfile
+    {
+        /// <summary>
+        /// Creates a new empty profile
+        /// </summary>
+        /// <param name="profile"></param>
+        public HandledPlayerPrefsSettingsProfile(string profile) : base(profile)
+        {
+            
+        }
+
+        private Dictionary<string,string> handlers = new Dictionary<string, string>();
+
+        public HandledPlayerPrefsSettingsProfile WithHandler(string field,string handler)
+        {
+            handlers[field] = handler;
+            return this;
+        }
+
+        /// <summary>
+        /// Set a value (IF THE VALUE IS EQUALS TO DEFAULT/STORED IT WILL NOT BE SAVED TO FILE)
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public override SettingsProfile Set<T>(string key,T value)
+        {
+            base.Set<T>(key,value);
+
+            //Call event handler
+            if(handlers.ContainsKey(key))
+                EventSystem.CallEvent(handlers[key],value);
+
+            return this;
+        }
     }
 
     /// <summary>

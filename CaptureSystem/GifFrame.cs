@@ -22,5 +22,7 @@ namespace LionSpoon
         public int width;
         public int height;
         public Color32[] data;
+        public Texture2D texture;
+
     }
 }

@@ -22,6 +22,8 @@ namespace LionSpoon
     public class SoundManager : MonoBehaviour
     {
         private static AudioSource[] audioSources;
+        private static List<AudioSource> musicSources = new List<AudioSource>();
+        private static List<AudioSource> fxSources = new List<AudioSource>();
         public StringAudioClip Clips = new StringAudioClip();
         private static SoundManager instance;
 
@@ -31,6 +33,38 @@ namespace LionSpoon
         public void Awake()
         {
             instance = this;
+        }
+
+        /// <summary>
+        /// Get volume based on mode
+        /// </summary>
+        /// <returns></returns>
+        public static float GetVolume(SoundMode mode)
+        {
+            if(mode == SoundMode.MUSIC)
+                return GetMusicVolume();
+            else if(mode == SoundMode.AUDIO)
+                return GetFxVolume();
+
+            return 1f;
+        }
+
+        /// <summary>
+        /// Get fx volume
+        /// </summary>
+        /// <returns></returns>
+        public static float GetFxVolume()
+        {
+            return SettingsProfile.StandardSettings.Get<float>("fxVolume",1f);
+        }
+
+        /// <summary>
+        /// Get music volume
+        /// </summary>
+        /// <returns></returns>
+        public static float GetMusicVolume()
+        {
+            return SettingsProfile.StandardSettings.Get<float>("musicVolume",1f);
         }
 
         /// <summary>
@@ -47,6 +81,18 @@ namespace LionSpoon
                 ob.transform.parent = null;
                 audioSources[i] = ob.AddComponent<AudioSource>();
             }
+
+            EventSystem.AddHandler("fxVolumeChanged",(volume) => 
+            {
+                foreach(AudioSource src in fxSources)
+                    src.volume = (float) volume;
+            });
+
+            EventSystem.AddHandler("musicVolumeChanged",(volume) => 
+            {
+                foreach(AudioSource src in musicSources)
+                    src.volume = (float) volume;
+            });
         }
 
         /// <summary>
@@ -54,9 +100,9 @@ namespace LionSpoon
         /// </summary>
         /// <param name="audio"></param>
         /// <returns></returns>
-        public static int PlayAudio(string audio)
+        public static int PlayAudio(string audio,SoundMode mode)
         {
-            return PlayAudio(audio,1,null);
+            return PlayAudio(audio,GetVolume(mode),null,mode);
         }
 
         /// <summary>
@@ -65,9 +111,9 @@ namespace LionSpoon
         /// <param name="audio"></param>
         /// <param name="volume"></param>
         /// <returns></returns>
-        public static int PlayAudio(string audio,float volume)
+        public static int PlayAudio(string audio,float volume,SoundMode mode)
         {
-            return PlayAudio(audio,volume,null,Vector3.zero);
+            return PlayAudio(audio,volume,null,Vector3.zero,mode);
         }
 
         /// <summary>
@@ -77,9 +123,9 @@ namespace LionSpoon
         /// <param name="volume"></param>
         /// <param name="parent"></param>
         /// <returns></returns>
-        public static int PlayAudio(string audio,float volume,Transform parent)
+        public static int PlayAudio(string audio,float volume,Transform parent,SoundMode mode)
         {
-            return PlayAudio(audio,volume,parent,Vector3.zero);
+            return PlayAudio(audio,volume,parent,Vector3.zero,mode);
         }
 
         /// <summary>
@@ -88,9 +134,9 @@ namespace LionSpoon
         /// <param name="audio"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        public static int PlayAudio(string audio,Vector3 position)
+        public static int PlayAudio(string audio,Vector3 position,SoundMode mode)
         {
-            return PlayAudio(audio,1,null,Vector3.zero);
+            return PlayAudio(audio,GetVolume(mode),null,Vector3.zero,mode);
         }
 
         /// <summary>
@@ -100,9 +146,9 @@ namespace LionSpoon
         /// <param name="volume"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        public static int PlayAudio(string audio,float volume,Vector3 position)
+        public static int PlayAudio(string audio,float volume,Vector3 position,SoundMode mode)
         {
-            return PlayAudio(audio,volume,null,Vector3.zero);
+            return PlayAudio(audio,volume,null,Vector3.zero,mode);
         }
 
         /// <summary>
@@ -113,9 +159,9 @@ namespace LionSpoon
         /// <param name="parent"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        public static int PlayAudio(string audio,float volume,Transform parent,Vector3 position)
+        public static int PlayAudio(string audio,float volume,Transform parent,Vector3 position,SoundMode mode)
         {
-            return PlayAudio(audio,volume,parent,position,false);
+            return PlayAudio(audio,volume,parent,position,false,mode);
         }
 
         /// <summary>
@@ -126,9 +172,9 @@ namespace LionSpoon
         /// <param name="parent"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        public static int PlayAudio(string audio,float volume,Transform parent,bool looping)
+        public static int PlayAudio(string audio,float volume,Transform parent,bool looping,SoundMode mode)
         {
-            return PlayAudio(audio,volume,parent,Vector3.zero,looping);
+            return PlayAudio(audio,volume,parent,Vector3.zero,looping,mode);
         }
 
         /// <summary>
@@ -139,7 +185,7 @@ namespace LionSpoon
         /// <param name="parent"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        public static int PlayAudio(string audio,float volume,Transform parent,Vector3 position,bool looping)
+        public static int PlayAudio(string audio,float volume,Transform parent,Vector3 position,bool looping,SoundMode mode)
         {
             for(int i = 0; i < audioSources.Length; i ++)
             {
@@ -154,6 +200,14 @@ namespace LionSpoon
                 src.loop = looping;
 
                 src.Play();
+
+                musicSources.Remove(src);
+                fxSources.Remove(src);
+
+                if(mode == SoundMode.AUDIO)
+                    fxSources.Add(src);
+                else if(mode == SoundMode.MUSIC)
+                    musicSources.Add(src);
 
                 return i;
             }
@@ -179,5 +233,15 @@ namespace LionSpoon
         {
             return audioSources[source];
         }
+    }
+
+    /// <summary>
+    /// Enumeration to play audio
+    /// </summary>
+    public enum SoundMode
+    {
+        MUSIC,
+        AUDIO,
+        IGNORE
     }
 }

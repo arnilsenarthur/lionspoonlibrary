@@ -25,11 +25,16 @@ namespace LionSpoon
     /// </summary>
     public class Gif
     {  
-        private Sprite[] sprites; 
-        private List<Texture2D> frames;
+        private List<GifFrame> frames; 
         private int fps = 0;
+        private int w = 0;
+        private int h = 0;
+        private bool disposed = false;
+        private Thread thread = null;
+       
+        private Coroutine saving = null;
 
-        private  UnityEngine.UI.Image image;
+        private RawImage image;
 
         /// <summary>
         /// Default constructor
@@ -37,22 +42,25 @@ namespace LionSpoon
         /// <param name="fps"></param>
         /// <param name="frames"></param>
         /// <param name="sprites"></param>
-        public Gif(int fps,List<Texture2D> frames,List<Sprite> sprites)
+        public Gif(int fps,int w,int h,List<GifFrame> frames)
         {
-            this.sprites = sprites.ToArray();
             this.fps = fps;
             this.frames = frames;
+            this.w = w;
+            this.h = h;
         }
 
         /// <summary>
         /// Starts to show a gif in a UnityEngine.UI.Image
         /// </summary>
         /// <param name="image"></param>
-        public void BindTo(Image image)
+        public void BindTo(RawImage image)
         {
             this.image = image;
             image.StartCoroutine(__BindTo());
         }
+
+        
 
         /// <summary>
         /// __internal__
@@ -63,7 +71,7 @@ namespace LionSpoon
             int i = 0;
             while(image != null)
             {
-                image.sprite = sprites[i%sprites.Length];
+                image.texture = frames[i%frames.Count].texture;
                 yield return new WaitForSeconds(1f/fps);
                 i ++;
             }
@@ -77,7 +85,7 @@ namespace LionSpoon
         /// <param name="updateProgress"></param>
         public void Save(MonoBehaviour behaviour,string filepath,Action<float,bool> updateProgress)
         {
-            behaviour.StartCoroutine(__Save(filepath,updateProgress));
+            saving = behaviour.StartCoroutine(__Save(filepath,updateProgress));
         }
 
         /// <summary>
@@ -88,42 +96,37 @@ namespace LionSpoon
         /// <returns></returns>
         public IEnumerator __Save(string filepath,Action<float,bool> updateProgress)
         {
-            List<GifFrame> gframes = new List<GifFrame>();
-
-            foreach(Texture2D tx in frames)
-            {
-                GifFrame gf = new GifFrame();
-                gf.width = tx.width;
-                gf.height = tx.height;
-                gf.data = tx.GetPixels32();
-
-                gframes.Add(gf);
-                yield return null;
-            }
-
             // Setup a worker thread and let it do its magic
             GifEncoder encoder = new GifEncoder(0, 50);
             encoder.SetDelay(Mathf.RoundToInt((1f/fps) * 1000f));
 
-            Thread t = new Thread(() => {
+            thread = new Thread(() => {
                 encoder.Start(filepath);
 
-                for (int i = 0; i < gframes.Count; i++)
+                for (int i = 0; i < frames.Count; i++)
                 {
-                    GifFrame frame = gframes[i];
+                    GifFrame frame = frames[i];
                     encoder.AddFrame(frame);
 
                     if(updateProgress != null)             
-                        updateProgress((float)i / (float)gframes.Count,false);
-                    
+                        updateProgress((float)i / (float)frames.Count,false);
+                        
+                   // yield return null;
+
+                   if(disposed)
+                        return;
                 }
 
                 encoder.Finish();
                 updateProgress(1,true);
             });
-            t.Priority = System.Threading.ThreadPriority.BelowNormal;
-            t.Start();
+            thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+            thread.Start();
+            saving = null;
+            yield return null;
         }
+
+       
 
         /// <summary>
         /// Stops to show gif in Image
@@ -131,6 +134,48 @@ namespace LionSpoon
         public void Unbind()
         {
             this.image = null;
+        }
+
+        public void Dispose(MonoBehaviour bh)
+        {
+            if(thread != null)
+                thread.Abort();
+
+            if(saving != null)
+                bh.StopCoroutine(saving);
+
+            disposed = true;
+                
+            Unbind();
+
+            foreach(GifFrame frame in frames)
+            {
+                Flush(frame.texture);
+            }
+
+            frames.Clear();
+        }
+
+        private void Flush(UnityEngine.Object obj)
+        {
+            #if UNITY_EDITOR
+            if (Application.isPlaying)
+                UnityEngine.Object.Destroy(obj);
+            else
+                UnityEngine.Object.DestroyImmediate(obj);
+            #else
+                UnityEngine.Object.Destroy(obj);
+            #endif
+        }
+
+        public int GetWidth()
+        {
+            return w;
+        }
+
+        public int GetHeight()
+        {
+            return h;
         }
     }
 }
