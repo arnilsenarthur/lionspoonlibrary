@@ -11,6 +11,7 @@ This library adds multiples classes to help the development of games by Hangzhou
 - [X] PlayStore APIS
 - [x] Coin & Shop System
 - [x] Gif & Png Capture System
+- [x] Events System
 - [ ] Upgrades (Timed or not) & Collectibles (Coins, etc...)
 
 ## Core:
