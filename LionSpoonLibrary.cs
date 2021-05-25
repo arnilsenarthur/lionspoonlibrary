@@ -14,12 +14,8 @@
 #define LS_LANGUAGE
 #define LS_SETTINGS
 #define LS_SOUNDS
-#define LS_GAME_SERVICES
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 /// <summary>
 /// Main LionSpoon proprietary library 
@@ -49,19 +45,13 @@ namespace LionSpoon
             //Language
             #if LS_LANGUAGE
             if((settings.GetModules() & LionSpoonLibraryModule.Language) == LionSpoonLibraryModule.Language)
-                Language.ReloadLanguages();
+                LanguageManager.Init();
             #endif
 
             //SoundSystem
             #if LS_SOUNDS
             if((settings.GetModules() & LionSpoonLibraryModule.Sounds) == LionSpoonLibraryModule.Sounds)
                 SoundManager.Init();
-            #endif
-
-            //GameServices
-            #if LS_GAME_SERVICES
-            if((settings.GetModules() & LionSpoonLibraryModule.GameServices) == LionSpoonLibraryModule.GameServices)
-                GameServices.Init();
             #endif
         }
 
@@ -104,7 +94,6 @@ namespace LionSpoon
         Language = 1,
         Settings = 2,
         Sounds = 4,
-        GameServices = 8,
         All = 255
     }
 

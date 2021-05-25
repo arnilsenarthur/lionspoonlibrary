@@ -40,7 +40,7 @@ namespace LionSpoon
         /// <returns></returns>
         public string GetCurrencyName()
         {
-            return Language.GetMessage("currency_" + id);
+            return LanguageManager.Localize("currency_" + id);
         }
 
         /// <summary>
